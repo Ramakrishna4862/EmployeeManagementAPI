@@ -17,6 +17,10 @@ namespace EmployeeManagementAPI.Data
             modelBuilder.Entity<Employee>()
                 .Property(e => e.Salary)
                 .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Employee>()
+                .HasIndex(e => e.Email)
+                .IsUnique();
         }
     }
 }
