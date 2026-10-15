@@ -16,6 +16,65 @@ A RESTful Web API built with **ASP.NET Core Web API, C#, Entity Framework Core, 
 - Swagger UI for API testing
 - SQL Server database migrations
 
+  ## API Endpoints
+
+Base route: `/api/Employees`
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/Employees` | Get employees with pagination, filtering, and sorting |
+| GET | `/api/Employees/{id}` | Get an employee by ID |
+| POST | `/api/Employees` | Create a new employee |
+| PUT | `/api/Employees/{id}` | Update an existing employee |
+| DELETE | `/api/Employees/{id}` | Delete an employee |
+
+### Pagination, Filtering, and Sorting
+
+Example request:
+
+```http
+GET /api/Employees?pageNumber=1&pageSize=10&empName=Rama&department=IT&sortBy=id&sortOrder=asc
+```
+
+Query parameters:
+
+- `pageNumber` — Page to retrieve
+- `pageSize` — Number of employees per page
+- `empName` — Filter employees by name
+- `department` — Filter employees by department
+- `sortBy` — Field used for sorting
+- `sortOrder` — Sort direction (`asc` or `desc`)
+
+The paginated response includes:
+
+- `PageNumber`
+- `PageSize`
+- `TotalEmployees`
+- `TotalPages`
+- `Data` — Employee records for the requested page
+
+### Create an Employee
+
+Example request body:
+
+```json
+{
+  "name": "Rama Krishna",
+  "email": "rama@example.com",
+  "department": "IT",
+  "salary": 50000
+}
+```
+
+The API validates the input and prevents duplicate employee email addresses.
+
+### Example Error Responses
+
+- `400 Bad Request` — Invalid input
+- `404 Not Found` — Employee does not exist
+- `409 Conflict` — Duplicate email address
+- `500 Internal Server Error` — Unexpected server error
+
 ## Technologies Used
 
 - C#
