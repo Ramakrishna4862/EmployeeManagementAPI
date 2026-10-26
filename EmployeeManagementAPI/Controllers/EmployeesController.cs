@@ -219,24 +219,54 @@ namespace EmployeeManagementAPI.Controllers
             return Ok(response);
         }
 
+
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEmployee(int id, EmployeeUpdateDto employeeDto)
+        public async Task<ActionResult<EmployeeResponseDto>> UpdateEmployee(int id, EmployeeUpdateDto employeeDto)
         {
+            // Step 1: Check validation errors
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Step 2: Find the employee
             var employee = await _context.Employees.FindAsync(id);
-            
-            if(employee == null)
+
+            if (employee == null)
             {
                 return NotFound();
             }
 
+
+            var emailExists = await _context.Employees
+                .AnyAsync(e => e.Email == employeeDto.Email
+                            && e.Id != id);
+
+
+            if (emailExists)
+            {
+                return Conflict(new ErrorResponse
+                {
+                    StatusCode = StatusCodes.Status409Conflict,
+                    Message = "An employee with this email already exists.",
+                    TraceId = HttpContext.TraceIdentifier
+                });
+            }
+
+
+            // Step 3: Update employee details
             employee.Name = employeeDto.Name;
             employee.Email = employeeDto.Email;
             employee.Department = employeeDto.Department;
             employee.Salary = employeeDto.Salary;
 
+            // Step 4: Save changes
             await _context.SaveChangesAsync();
+
+            // Step 5: Return HTTP 204
             return NoContent();
         }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmployee(int id)
