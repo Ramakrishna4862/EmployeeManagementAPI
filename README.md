@@ -1,149 +1,162 @@
 # Employee Management API
 
-A RESTful Web API built with **ASP.NET Core Web API, C#, Entity Framework Core, and SQL Server** to manage employee records.
+A RESTful Web API built using ASP.NET Core Web API, C#, Entity Framework Core, and SQL Server to manage employee records. This project demonstrates backend development, data validation, error handling, and automated testing using .NET 8.
+
+## Technologies Used
+
+- C# and ASP.NET Core Web API (.NET 8)
+- Entity Framework Core 8
+- Microsoft SQL Server
+- Data Transfer Objects (DTOs) and Data Annotations
+- LINQ and asynchronous programming
+- Swagger / OpenAPI
+- xUnit and Moq
+- EF Core InMemory for database-related tests
+- Git and GitHub
 
 ## Features
 
-- Create and retrieve employee records
-- Update and delete employee details
-- DTO-based request and response handling
-- Input validation using Data Annotations
-- Duplicate email detection with appropriate HTTP status codes
-- Pagination for employee records
-- Global exception handling middleware
-- Structured error responses with trace IDs
-- Entity Framework Core database integration
-- Swagger UI for API testing
-- SQL Server database migrations
+- Create, retrieve, update, and delete employee records
+- Validate employee data, including required fields, email addresses, string lengths, and salary ranges
+- Prevent duplicate employee email addresses
+- Return appropriate HTTP status codes
+- Paginate employee records with response metadata
+- Filter employees by name and department
+- Sort employee records by supported fields and sort direction
+- Handle unexpected exceptions through custom middleware
+- Return structured error responses with trace IDs
+- Test API behavior and exception handling with automated tests
 
-  ## API Endpoints
+## Employee Fields
+
+- `Id`
+- `Name`
+- `Email`
+- `Department`
+- `Salary`
+- `CreatedDate`
+
+## API Endpoints
 
 Base route: `/api/Employees`
 
 | Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/Employees` | Get employees with pagination, filtering, and sorting |
-| GET | `/api/Employees/{id}` | Get an employee by ID |
-| POST | `/api/Employees` | Create a new employee |
-| PUT | `/api/Employees/{id}` | Update an existing employee |
+| GET | `/api/Employees` | Retrieve employees with pagination, filtering, and sorting |
+| GET | `/api/Employees/{id}` | Retrieve an employee by ID |
+| POST | `/api/Employees` | Create an employee |
+| PUT | `/api/Employees/{id}` | Update an employee |
 | DELETE | `/api/Employees/{id}` | Delete an employee |
 
-### Pagination, Filtering, and Sorting
+## Pagination, Filtering, and Sorting
 
 Example request:
 
 ```http
-GET /api/Employees?pageNumber=1&pageSize=10&empName=Rama&department=IT&sortBy=id&sortOrder=asc
+GET /api/Employees?pageNumber=1&pageSize=10&empName=Rama&department=IT&sortBy=name&sortOrder=asc
 ```
 
-Query parameters:
+Supported query parameters:
 
-- `pageNumber` — Page to retrieve
-- `pageSize` — Number of employees per page
-- `empName` — Filter employees by name
-- `department` — Filter employees by department
-- `sortBy` — Field used for sorting
-- `sortOrder` — Sort direction (`asc` or `desc`)
+- `pageNumber`: Page to retrieve
+- `pageSize`: Number of employees per page
+- `empName`: Filter by employee name
+- `department`: Filter by department
+- `sortBy`: Supported field used for sorting
+- `sortOrder`: Sort direction (`asc` or `desc`)
 
-The paginated response includes:
+The paginated response includes page information, total employee count, total pages, and the employee data for the requested page.
 
-- `PageNumber`
-- `PageSize`
-- `TotalEmployees`
-- `TotalPages`
-- `Data` — Employee records for the requested page
-
-### Create an Employee
-
-Example request body:
+## Example Create Employee Request
 
 ```json
 {
   "name": "Rama Krishna",
   "email": "rama@example.com",
   "department": "IT",
-  "salary": 50000
+  "salary": 25000
 }
 ```
 
-The API validates the input and prevents duplicate employee email addresses.
+## HTTP Status Codes
 
-### Example Error Responses
+- `200 OK`: Request completed successfully
+- `201 Created`: Employee created successfully
+- `204 No Content`: Update or delete completed successfully
+- `400 Bad Request`: Invalid request data
+- `404 Not Found`: Employee not found
+- `409 Conflict`: Duplicate employee email
+- `500 Internal Server Error`: Unexpected server error
 
-- `400 Bad Request` — Invalid input
-- `404 Not Found` — Employee does not exist
-- `409 Conflict` — Duplicate email address
-- `500 Internal Server Error` — Unexpected server error
+## Exception Handling
 
-## Technologies Used
-
-- C#
-- ASP.NET Core Web API (.NET 8)
-- Entity Framework Core
-- Microsoft SQL Server
-- Data Transfer Objects (DTOs)
-- LINQ and asynchronous programming
-- Swagger / OpenAPI
-- Git and GitHub
-
-## Error Handling
-
-The API uses appropriate HTTP status codes, including:
-
-- `200 OK` — Request completed successfully
-- `201 Created` — Employee created successfully
-- `400 Bad Request` — Invalid request data
-- `404 Not Found` — Employee not found
-- `409 Conflict` — Duplicate employee email
-- `500 Internal Server Error` — Unexpected server error
+Custom exception middleware logs unexpected exceptions and returns a standardized error response containing an error message and trace ID.
 
 ## Getting Started
 
 ### Prerequisites
 
 - .NET 8 SDK
+- Visual Studio 2022 or a compatible IDE
 - SQL Server
-- Visual Studio 2022 or another compatible IDE
+- SQL Server Management Studio (SSMS), recommended
 
-### Setup
+### Setup Instructions
 
-1. Clone this repository:
+1. Clone the repository:
 
    ```bash
    git clone https://github.com/Ramakrishna4862/EmployeeManagementAPI.git
    ```
 
-2. Open the solution or project in Visual Studio.
+2. Open the solution in Visual Studio.
 
-3. Configure the `DefaultConnection` connection string using User Secrets or another secure configuration method.
+3. Configure the `DefaultConnection` connection string for your local SQL Server instance. Use User Secrets or another secure local configuration method. Do not commit passwords or credentials.
 
-4. Apply the Entity Framework Core migrations:
+4. If the project has EF Core migrations and the EF CLI is installed, apply them from the project directory:
 
    ```bash
    dotnet ef database update
    ```
 
-5. Run the application:
+5. Run the API:
 
    ```bash
    dotnet run
    ```
 
-6. Open the Swagger URL shown in the terminal to explore and test the API.
+6. Open the Swagger URL displayed in the terminal to explore and test the endpoints.
+
+## Running Automated Tests
+
+Run the tests from the repository root:
+
+```bash
+dotnet test
+```
+
+The test project uses xUnit, EF Core InMemory, and Moq where appropriate to test validation, controller behavior, and exception handling.
 
 ## What I Learned
 
-- Designing RESTful API endpoints
-- Using DTOs to separate API contracts from database entities
-- Validating incoming requests
-- Handling database conflicts
-- Implementing pagination
-- Centralizing exception handling with middleware
-- Working with Entity Framework Core migrations
-- Testing API endpoints using Swagger
+- Designing RESTful APIs with ASP.NET Core
+- Implementing CRUD operations using Entity Framework Core
+- Using DTOs and Data Annotations for input validation
+- Handling duplicate records and appropriate HTTP responses
+- Implementing pagination, filtering, and sorting
+- Centralizing error handling with custom middleware
+- Writing automated tests using xUnit and Moq
+
+## Future Improvements
+
+- JWT authentication and role-based authorization
+- Additional service-layer tests
+- Integration tests using a real test database
+- Continuous integration using GitHub Actions
+- Deployment to a cloud hosting platform
 
 ## Author
 
-**Rama Krishna**
+Rama Krishna
 
-GitHub: [Ramakrishna4862](https://github.com/Ramakrishna4862)
+GitHub: https://github.com/Ramakrishna4862
